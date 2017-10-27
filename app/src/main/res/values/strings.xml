@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Baking App</string>
+    <string name="previous_step">Previous step</string>
+    <string name="next_step">Next step</string>
+    <plurals name="servings">
+        <item quantity="one">%d serving</item>
+        <item quantity="other">%d servings</item>
+    </plurals>
+    <plurals name="measurements_cup">
+        <item quantity="one">%d cup</item>
+        <item quantity="other">%d cups</item>
+    </plurals>
+    <plurals name="measurements_g">
+        <item quantity="one">%d gram</item>
+        <item quantity="other">%d grams</item>
+    </plurals>
+    <plurals name="measurements_k">
+        <item quantity="one">%d kilogram</item>
+        <item quantity="other">%d kilograms</item>
+    </plurals>
+    <plurals name="measurements_tsp">
+        <item quantity="one">%d teaspoon</item>
+        <item quantity="other">%d teaspoons</item>
+    </plurals>
+    <plurals name="measurements_tbsp">
+        <item quantity="one">%d table spoon</item>
+        <item quantity="other">%d table spoons</item>
+    </plurals>
+    <plurals name="measurements_oz">
+        <item quantity="one">%d ounce</item>
+        <item quantity="other">%d ounces</item>
+    </plurals>
+    <string name="tablespoons">tablespoons</string>
+    <string name="teaspoons">teaspoons</string>
+    <string name="ounces">ounces</string>
+    <string name="cups">cups</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="step_thumbnail">Step thumbnail</string>
+    <string name="recipe_image">Recipe image</string>
+    <string name="error_message">Failed to load recipes. Please make sure you\'re connected to the internet and try again…</string>
+    <string name="try_again">Try again</string>
+</resources>
