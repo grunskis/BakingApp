@@ -39,4 +39,8 @@
     <string name="recipe_image">Recipe image</string>
     <string name="error_message">Failed to load recipes. Please make sure you\'re connected to the internet and try again…</string>
     <string name="try_again">Try again</string>
+    <string name="appwidget_text">Ingredient list</string>
+    <string name="add_widget">Add widget</string>
+    <string name="choose_recipe">Choose recipe</string>
+    <string name="widget_name">Ingredient list</string>
 </resources>

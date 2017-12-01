@@ -1,11 +1,8 @@
 package com.grunskis.bakingapp.ui;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +11,7 @@ import android.widget.TextView;
 import com.grunskis.bakingapp.R;
 import com.grunskis.bakingapp.models.Ingredient;
 import com.grunskis.bakingapp.models.Step;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.grunskis.bakingapp.utilities.UIUtilities;
 
 class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -65,7 +60,8 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_INGREDIENTS:
                 IngredientsViewHolder ingredientsViewHolder = (IngredientsViewHolder)holder;
-                ingredientsViewHolder.setContent(formatIngredientArray(mIngredients));
+                SpannableString content = UIUtilities.formatIngredientArray(mIngredients, mContext);
+                ingredientsViewHolder.setContent(content);
                 break;
             case VIEW_TYPE_STEP:
             default:
@@ -123,77 +119,5 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void onClick(View v) {
             mClickHandler.onClick(mSteps[getAdapterPosition()-1]);
         }
-    }
-
-    private String getQuantityName(Ingredient ingredient) {
-        int quantity = (int) ingredient.getQuantity();
-        boolean hasFractionalPart = (ingredient.getQuantity() % 1) != 0;
-        Resources resources = mContext.getResources();
-
-        switch (ingredient.getMeasureType()) {
-            case CUP:
-                if (hasFractionalPart) {
-                    return "" + ingredient.getQuantity() + " " + mContext.getString(R.string.cups);
-                } else {
-                    return resources.getQuantityString(R.plurals.measurements_cup, quantity, quantity);
-                }
-
-            case UNIT:
-                return "" + quantity;
-
-            case G:
-                return resources.getQuantityString(R.plurals.measurements_g, quantity, quantity);
-
-            case K:
-                return resources.getQuantityString(R.plurals.measurements_k, quantity, quantity);
-
-            case TSP:
-                if (hasFractionalPart) {
-                    return "" + ingredient.getQuantity() + " " + mContext.getString(R.string.teaspoons);
-                } else {
-                    return resources.getQuantityString(R.plurals.measurements_tsp, quantity, quantity);
-                }
-
-            case TBLSP:
-                if (hasFractionalPart) {
-                    return "" + ingredient.getQuantity() + " " + mContext.getString(R.string.tablespoons);
-                } else {
-                    return resources.getQuantityString(R.plurals.measurements_tbsp, quantity, quantity);
-                }
-
-            case OZ:
-                if (hasFractionalPart) {
-                    return "" + ingredient.getQuantity() + " " + mContext.getString(R.string.ounces);
-                } else {
-                    return resources.getQuantityString(R.plurals.measurements_oz, quantity, quantity);
-                }
-
-            default:
-                return "" + ingredient.getQuantity() + " " + ingredient.getMeasureType().toString();
-        }
-    }
-
-    private SpannableString formatIngredientArray(Ingredient[] ingredients) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Ingredient i : ingredients) {
-            stringBuilder.append("\u2022 ");
-            stringBuilder.append(getQuantityName(i));
-            stringBuilder.append(" ");
-            stringBuilder.append(i.getName());
-            stringBuilder.append("\n\n");
-        }
-
-        String ingredientString = stringBuilder.toString();
-        SpannableString spannableString = new SpannableString(ingredientString);
-
-        // set custom line spacing, learned from https://stackoverflow.com/a/42691246
-        Matcher matcher = Pattern.compile("\n\n").matcher(ingredientString);
-        while (matcher.find()) {
-            spannableString.setSpan(new AbsoluteSizeSpan(10, true),
-                    matcher.start() + 1, matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        return spannableString;
     }
 }

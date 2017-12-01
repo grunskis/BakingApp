@@ -1,5 +1,6 @@
 package com.grunskis.bakingapp;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import com.grunskis.bakingapp.models.Recipe;
 import com.grunskis.bakingapp.ui.RecipeListAdapter;
 import com.grunskis.bakingapp.utilities.NetworkUtilities;
+import com.grunskis.bakingapp.utilities.UIUtilities;
 
 public class MainActivity extends AppCompatActivity implements
         RecipeListAdapter.RecipeListOnClickHandler {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final int RECIPE_LOADER_ID = 1;
 
+    private int mAppWidgetId;
     private Recipe[] mRecipes;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -72,6 +75,21 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        if (isWidgetConfiguration()) {
+            // prepare response in case ues abandons the configuration activity
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            setResult(RESULT_CANCELED, resultValue);
+
+            setTitle(getString(R.string.choose_recipe));
+        }
+
         mProgressBar = findViewById(R.id.pb_loading);
         mErrorView = findViewById(R.id.error_view);
 
@@ -106,6 +124,10 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private boolean isWidgetConfiguration() {
+        return mAppWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID;
+    }
+
     void loadRecipes() {
         LoaderManager loaderManager = getSupportLoaderManager();
         loaderManager.restartLoader(RECIPE_LOADER_ID, null, recipeLoaderCallbacks);
@@ -121,9 +143,26 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(Recipe recipe) {
-        Intent intent = new Intent(this, RecipeDetailActivity.class);
-        intent.putExtra(EXTRA_RECIPE, recipe);
-        startActivity(intent);
+        if (isWidgetConfiguration()) {
+            Context context = MainActivity.this;
+
+            String ingredientString = UIUtilities.formatIngradients(context,
+                    recipe.getIngredients());
+            BakingAppWidget.saveWidgetData(context, mAppWidgetId, ingredientString);
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            BakingAppWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId,
+                    ingredientString);
+
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            setResult(RESULT_OK, resultValue);
+            finish();
+        } else {
+            Intent intent = new Intent(this, RecipeDetailActivity.class);
+            intent.putExtra(EXTRA_RECIPE, recipe);
+            startActivity(intent);
+        }
     }
 
     @Override
