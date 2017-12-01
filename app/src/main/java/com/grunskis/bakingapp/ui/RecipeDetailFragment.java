@@ -20,7 +20,6 @@ public class RecipeDetailFragment extends Fragment {
 
     private static final String ARGUMENT_RECIPE = "ARGUMENT_RECIPE";
 
-    private Recipe mRecipe;
     private RecipeStepClickHandler mClickHandler;
 
     public RecipeDetailFragment() {}
@@ -42,10 +41,10 @@ public class RecipeDetailFragment extends Fragment {
         recyclerView.addItemDecoration(itemDecoration);
 
         Bundle args = getArguments();
-        mRecipe = args.getParcelable(ARGUMENT_RECIPE);
+        Recipe recipe = args.getParcelable(ARGUMENT_RECIPE);
 
         RecipeDetailAdapter adapter = new RecipeDetailAdapter(getContext(),
-                mRecipe.getIngredients(), mRecipe.getSteps());
+                recipe.getIngredients(), recipe.getSteps());
         adapter.setClickHandler(mClickHandler);
         recyclerView.setAdapter(adapter);
 
