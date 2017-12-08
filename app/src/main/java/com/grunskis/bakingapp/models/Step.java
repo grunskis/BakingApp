@@ -5,6 +5,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Step implements Parcelable {
+    static public final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
     private int mId;
     private String mShortDescription;
     private String mDescription;
@@ -27,18 +38,6 @@ public class Step implements Parcelable {
         mVideoUrl = in.readParcelable(Uri.class.getClassLoader());
         mThumbnailUrl = in.readParcelable(Uri.class.getClassLoader());
     }
-
-    static final Creator<Step> CREATOR = new Creator<Step>() {
-        @Override
-        public Step createFromParcel(Parcel in) {
-            return new Step(in);
-        }
-
-        @Override
-        public Step[] newArray(int size) {
-            return new Step[size];
-        }
-    };
 
     @Override
     public int describeContents() {
