@@ -46,6 +46,8 @@ public class RecipeStepFragment extends Fragment {
 
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
+    private long mPlayerPosition;
+    private boolean mPlayerPlayWhenReady;
 
     public RecipeStepFragment() {}
 
@@ -62,15 +64,6 @@ public class RecipeStepFragment extends Fragment {
         Uri videoUrl = mStep.getVideoUrl();
         if (videoUrl.getScheme() != null && videoUrl.getScheme().startsWith("http")) {
             thumbnailImageView.setVisibility(View.GONE);
-
-            long position = 0;
-            boolean playWhenReady = true;
-            if (savedInstanceState != null) {
-                position = savedInstanceState.getLong(BUNDLE_PLAYER_POSITION, 0);
-                playWhenReady = savedInstanceState.getBoolean(BUNDLER_PLAYER_READY, true);
-            }
-            initializePlayer(videoUrl, position, playWhenReady);
-
         } else {
             mPlayerView.setVisibility(View.GONE);
 
@@ -142,10 +135,8 @@ public class RecipeStepFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (mExoPlayer != null) {
-            outState.putLong(BUNDLE_PLAYER_POSITION, mExoPlayer.getCurrentPosition());
-            outState.putBoolean(BUNDLER_PLAYER_READY, mExoPlayer.getPlayWhenReady());
-        }
+        outState.putLong(BUNDLE_PLAYER_POSITION, mPlayerPosition);
+        outState.putBoolean(BUNDLER_PLAYER_READY, mPlayerPlayWhenReady);
     }
 
     private void initializePlayer(Uri mediaUri, long position, boolean playWhenReady) {
@@ -175,9 +166,34 @@ public class RecipeStepFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            mPlayerPosition = 0;
+            mPlayerPlayWhenReady = true;
+        } else {
+            mPlayerPosition = savedInstanceState.getLong(BUNDLE_PLAYER_POSITION, 0);
+            mPlayerPlayWhenReady = savedInstanceState.getBoolean(BUNDLER_PLAYER_READY, true);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mPlayerView.getVisibility() == View.VISIBLE) {
+            initializePlayer(mStep.getVideoUrl(), mPlayerPosition, mPlayerPlayWhenReady);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
         if (mExoPlayer != null) {
+            mPlayerPosition = mExoPlayer.getCurrentPosition();
+            mPlayerPlayWhenReady = mExoPlayer.getPlayWhenReady();
+
             releasePlayer();
         }
     }
