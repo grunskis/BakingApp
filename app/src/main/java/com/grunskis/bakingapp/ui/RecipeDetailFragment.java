@@ -32,7 +32,6 @@ public class RecipeDetailFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_recipe_detail,
                 container, false);
 
-        // TODO: 25.11.17 make items look clickable & highlight the currently selected one if two panes
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_recipe_detail);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
