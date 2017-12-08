@@ -54,7 +54,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeSte
             }
 
             mIsTwoPage = findViewById(R.id.recipe_two_pane) != null;
-            if (mIsTwoPage) {
+            if (mIsTwoPage && savedInstanceState == null) {
                 showStep(mRecipe.getSteps()[mStepIndex]);
             }
         }
